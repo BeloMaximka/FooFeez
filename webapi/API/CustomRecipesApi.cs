@@ -9,7 +9,7 @@ namespace webapi.API
     public class CustomRecipesApi : RecipesApi, ICustomRecipesApi
     {
         private static Random random = new Random();
-        public MealResult? SearchRandomRecipeByNutrients(string type, double calories, double carbs, double fat, double protein)
+        public MealResult? SearchRandomRecipeByNutrients(string type, double? calories, double? carbs, double? fat, double? protein)
         {
             var path = "/recipes/findByNutrients";
             path = path.Replace("{format}", "json");
@@ -20,10 +20,14 @@ namespace webapi.API
             var fileParams = new Dictionary<string, FileParameter>();
             string postBody = null;
 
-            queryParams.Add("maxCalories", ApiClient.ParameterToString(calories));
-            queryParams.Add("maxProtein", ApiClient.ParameterToString(protein));
-            queryParams.Add("maxCarbs", ApiClient.ParameterToString(carbs));
-            queryParams.Add("maxFat", ApiClient.ParameterToString(fat));
+            if (calories != null)
+                queryParams.Add("maxCalories", ApiClient.ParameterToString(calories));
+            if(protein != null)
+                queryParams.Add("maxProtein", ApiClient.ParameterToString(protein));
+            if (carbs != null)
+                queryParams.Add("maxCarbs", ApiClient.ParameterToString(carbs));
+            if (fat != null)
+                queryParams.Add("maxFat", ApiClient.ParameterToString(fat));
 
             // authentication setting, if any
             string[] authSettings = new string[] { "apiKeyScheme" };
