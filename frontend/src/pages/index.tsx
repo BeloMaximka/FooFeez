@@ -1,20 +1,23 @@
 import { CreateMealRequestCard, MealCard } from "@/components/Meal/MealCard";
-import { useBreakfastStore } from "@/store";
+import { useMenuStore } from "@/store";
 import { mockResultDish } from "@/types/dish";
 import { Container } from "@mui/material";
 
 export default function Home() {
-  const breakfastStore = useBreakfastStore();
+  const { meals, setCalories, setCarbs, setFat, setProtein } = useMenuStore();
 
   return (
     <Container maxWidth="lg" className="bg-gray-200 min-h-screen px-6 py-4">
-      <CreateMealRequestCard
-        meal={breakfastStore.value}
-        onCaloriesChange={breakfastStore.setCalories}
-        onCarbsChange={breakfastStore.setCarbs}
-        onFatChange={breakfastStore.setFat}
-        onProteinChange={breakfastStore.setProtein}
-      />
+      {meals.map((m, i) => (
+        <CreateMealRequestCard
+          key={m.type}
+          meal={m}
+          onCaloriesChange={(value) => setCalories(i, value)}
+          onCarbsChange={(value) => setCarbs(i, value)}
+          onFatChange={(value) => setFat(i, value)}
+          onProteinChange={(value) => setProtein(i, value)}
+        />
+      ))}
     </Container>
   );
 }

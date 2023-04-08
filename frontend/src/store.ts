@@ -1,44 +1,70 @@
 import { create } from "zustand";
-import { MealRequest, MealType } from "./types/dish";
+import { MealRequest } from "./types/dish";
 
-interface MenuStoreBase {
-  value: MealRequest;
-  setCalories: (value: number) => void;
-  setCarbs: (value: number) => void;
-  setFat: (value: number) => void;
-  setProtein: (value: number) => void;
+interface MenuStore {
+  meals: MealRequest[];
+  setCalories: (index: number, value: number) => void;
+  setCarbs: (index: number, value: number) => void;
+  setFat: (index: number, value: number) => void;
+  setProtein: (index: number, value: number) => void;
 }
 
-interface BreakfastStore extends MenuStoreBase {
-  breakfast: MealRequest;
-}
-
-interface LunchStore extends MenuStoreBase {
-  lunch: MealRequest;
-}
-
-interface DinnerStore extends MenuStoreBase {
-  dinner: MealRequest;
-}
-
-export const useBreakfastStore = create<MenuStoreBase>()((set) => ({
-  value: {
-    type: "breakfast",
-    calories: 50,
-    carbs: 0,
-    fat: 0,
-    protein: 0,
+export const useMenuStore = create<MenuStore>()((set) => ({
+  meals: [
+    {
+      type: "breakfast",
+      calories: 50,
+      carbs: 0,
+      fat: 0,
+      protein: 0,
+    },
+  ],
+  setCalories(index, value) {
+    set((state) => {
+      const meal: MealRequest = { ...state.meals[index], calories: value };
+      return {
+        meals: [
+          ...state.meals.slice(0, index),
+          meal,
+          ...state.meals.slice(index + 1),
+        ],
+      };
+    });
   },
-  setCalories(value) {
-    set((state) => ({ value: { ...state.value, calories: value } }));
+  setCarbs(index, value) {
+    set((state) => {
+      const meal: MealRequest = { ...state.meals[index], carbs: value };
+      return {
+        meals: [
+          ...state.meals.slice(0, index),
+          meal,
+          ...state.meals.slice(index + 1),
+        ],
+      };
+    });
   },
-  setCarbs(value) {
-    set((state) => ({ value: { ...state.value, carbs: value } }));
+  setFat(index, value) {
+    set((state) => {
+      const meal: MealRequest = { ...state.meals[index], fat: value };
+      return {
+        meals: [
+          ...state.meals.slice(0, index),
+          meal,
+          ...state.meals.slice(index + 1),
+        ],
+      };
+    });
   },
-  setFat(value) {
-    set((state) => ({ value: { ...state.value, fat: value } }));
-  },
-  setProtein(value) {
-    set((state) => ({ value: { ...state.value, protein: value } }));
+  setProtein(index, value) {
+    set((state) => {
+      const meal: MealRequest = { ...state.meals[index], protein: value };
+      return {
+        meals: [
+          ...state.meals.slice(0, index),
+          meal,
+          ...state.meals.slice(index + 1),
+        ],
+      };
+    });
   },
 }));
