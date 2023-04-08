@@ -43,7 +43,7 @@ namespace webapi
             var app = builder.Build();
 
             // CORS
-            app.UseCors(builder => builder.AllowAnyOrigin());
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader());
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
