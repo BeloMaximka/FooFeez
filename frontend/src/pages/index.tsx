@@ -2,15 +2,22 @@ import { CreateMealRequestCard } from "@/components/Meal/MealCard";
 import { useMenuStore } from "@/store";
 import { MealRequest, MealType, mealTypes } from "@/types/dish";
 import {
-  Box,
-  Button,
-  Container,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  capitalize,
+    Box,
+    Button,
+    Container,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+    capitalize,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper
 } from "@mui/material";
 import { useState } from "react";
 import { useMutation } from "react-query";
@@ -25,11 +32,16 @@ export default function Home() {
     addMeal,
     removeMeal,
   } = useMenuStore();
-  const [mealType, setMealType] = useState<MealType>();
+    const [mealType, setMealType] = useState<MealType>();
+    const handleChange = (event: SelectChangeEvent) => {
+        setMealType(event.target.value as string);
+    };
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setMealType(event.target.value as string);
-  };
+    const [totalCalories = 0, setTotalCalories] = useState<number>();
+    const [totalFat = 0, setTotalFat] = useState<number>();
+    const [totalCarbs = 0, setTotalCarbs] = useState<number>();
+    const [totalProtein = 0, setTotalProtein] = useState<number>();
+    
 
   const mutation = useMutation(
     (meals: MealRequest[]) =>
@@ -70,17 +82,51 @@ export default function Home() {
           onClick={() => mealType && addMeal(mealType)}
         >
           Create
-        </Button>
+              </Button>
+              <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                          <TableRow>
+                              <TableCell></TableCell>
+                              <TableCell align="right">Calories</TableCell>
+                              <TableCell align="right">Fat&nbsp;(g)</TableCell>
+                              <TableCell align="right">Carbs&nbsp;(g)</TableCell>
+                              <TableCell align="right">Protein&nbsp;(g)</TableCell>
+                          </TableRow>
+                      </TableHead>
+                      <TableBody>
+                          <TableRow>
+                              <TableCell>Total</TableCell>
+                              <TableCell align="right">{totalCalories}</TableCell>
+                              <TableCell align="right">{totalFat}</TableCell>
+                              <TableCell align="right">{totalCarbs}</TableCell>
+                              <TableCell align="right">{totalProtein}</TableCell>
+                          </TableRow>
+                      </TableBody>
+                  </Table>
+              </TableContainer>
       </Box>
       <Box display={"flex"} flexWrap={"wrap"} gap={4}>
         {meals.map((m, i) => (
           <CreateMealRequestCard
             key={i}
             meal={m}
-            onCaloriesChange={(value) => setCalories(i, value)}
-            onCarbsChange={(value) => setCarbs(i, value)}
-            onFatChange={(value) => setFat(i, value)}
-            onProteinChange={(value) => setProtein(i, value)}
+                onCaloriesChange={(value) => {
+                    setCalories(i, value);
+                    setTotalCalories(meals.reduce((sum, current) => sum + current.calories, 0));
+                }}
+                onCarbsChange={(value) => {
+                    setCarbs(i, value);
+                    setTotalCarbs(meals.reduce((sum, current) => sum + current.carbs, 0));
+                }}
+                onFatChange={(value) => {
+                    setFat(i, value);
+                    setTotalFat(meals.reduce((sum, current) => sum + current.fat, 0));
+                }}
+                onProteinChange={(value) => {
+                    setProtein(i, value);
+                    setTotalProtein(meals.reduce((sum, current) => sum + current.protein, 0));
+                }}
             onRemove={() => removeMeal(i)}
           />
         ))}
