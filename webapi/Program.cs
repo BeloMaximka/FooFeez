@@ -17,6 +17,7 @@ namespace webapi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddCors();
 
             
             try
@@ -40,6 +41,9 @@ namespace webapi
                 });
 
             var app = builder.Build();
+
+            // CORS
+            app.UseCors(builder => builder.AllowAnyOrigin());
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
