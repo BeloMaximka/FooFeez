@@ -65,7 +65,7 @@ export const useMenuStore = create<MenuStore>()((set) => ({
     set((state) => ({
       meals: [
         ...state.meals,
-        { type, calories: 0, carbs: -1, fat: -1, protein: -1 },
+        { type, calories: 100, carbs: -1, fat: -1, protein: -1 },
       ],
     }));
   },
