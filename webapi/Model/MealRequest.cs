@@ -11,12 +11,12 @@ namespace webapi.Model
         public double Calories { get; set; }
 
         [JsonPropertyName("carbs")]
-        public double Carbs { get; set; }
+        public double? Carbs { get; set; }
 
         [JsonPropertyName("fat")]
-        public double Fat { get; set; }
+        public double? Fat { get; set; }
 
         [JsonPropertyName("protein")]
-        public double Protein { get; set; }
+        public double? Protein { get; set; }
     }
 }
