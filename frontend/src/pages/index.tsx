@@ -1,23 +1,20 @@
-// import { Box, Container, Typography } from "@material-ui/core";
-
-import { Box, Container, Typography } from "@mui/material";
+import { CreateMealRequestCard, MealCard } from "@/components/Meal/MealCard";
+import { useBreakfastStore } from "@/store";
+import { mockResultDish } from "@/types/dish";
+import { Container } from "@mui/material";
 
 export default function Home() {
+  const breakfastStore = useBreakfastStore();
+
   return (
-    <Container maxWidth="lg">
-      <Box
-        sx={{
-          my: 4,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h4" component="h1" gutterBottom>
-          Material UI - Next.js example in TypeScript
-        </Typography>
-      </Box>
+    <Container maxWidth="lg" className="bg-gray-200 min-h-screen px-6 py-4">
+      <CreateMealRequestCard
+        meal={breakfastStore.value}
+        onCaloriesChange={breakfastStore.setCalories}
+        onCarbsChange={breakfastStore.setCarbs}
+        onFatChange={breakfastStore.setFat}
+        onProteinChange={breakfastStore.setProtein}
+      />
     </Container>
   );
 }
