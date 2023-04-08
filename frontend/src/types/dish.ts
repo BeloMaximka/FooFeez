@@ -1,4 +1,5 @@
-export type MealType = "breakfast" | "lunch" | "dinner";
+export const mealTypes = ["breakfast", "lunch", "dinner", "snack"];
+export type MealType = typeof mealTypes[number];
 export type MealParams = "calories" | "carbs" | "fat" | "protein";
 
 export interface ResultMeal {

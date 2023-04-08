@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { MealRequest } from "./types/dish";
+import { MealRequest, MealType } from "./types/dish";
 
 interface MenuStore {
   meals: MealRequest[];
@@ -7,6 +7,8 @@ interface MenuStore {
   setCarbs: (index: number, value: number) => void;
   setFat: (index: number, value: number) => void;
   setProtein: (index: number, value: number) => void;
+  addMeal: (type: MealType) => void;
+  removeMeal: (index: number) => void;
 }
 
 export const useMenuStore = create<MenuStore>()((set) => ({
@@ -66,5 +68,18 @@ export const useMenuStore = create<MenuStore>()((set) => ({
         ],
       };
     });
+  },
+  addMeal(type) {
+    set((state) => ({
+      meals: [
+        ...state.meals,
+        { type, calories: 0, carbs: 0, fat: 0, protein: 0 },
+      ],
+    }));
+  },
+  removeMeal(index: number) {
+    set((state) => ({
+      meals: state.meals.filter((_, i) => i !== index),
+    }));
   },
 }));

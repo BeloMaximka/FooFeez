@@ -6,24 +6,19 @@ import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Collapse from "@mui/material/Collapse";
-import Avatar from "@mui/material/Avatar";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { MealParams, MealRequest, MealType, ResultMeal } from "@/types/dish";
+import { MealParams, MealRequest, ResultMeal } from "@/types/dish";
 import {
   Button,
   Checkbox,
   List,
   ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Slider,
+  capitalize,
 } from "@mui/material";
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -128,13 +123,8 @@ interface CreateMealRequestCardProps {
   onCarbsChange: (value: number) => void;
   onFatChange: (value: number) => void;
   onProteinChange: (value: number) => void;
+  onRemove: () => void;
 }
-
-const capitalize = (value: string) => {
-  if (!value) return "";
-
-  return value.charAt(0).toUpperCase() + value.slice(1);
-};
 
 const mealParams: MealParams[] = ["carbs", "fat", "protein"];
 
@@ -144,6 +134,7 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
   onCarbsChange,
   onFatChange,
   onProteinChange,
+  onRemove,
 }) => {
   const [checked, setChecked] = React.useState<string[]>([]);
 
@@ -168,7 +159,7 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
   };
 
   return (
-    <Card className="max-w-2xl">
+    <Card className="w-full max-w-lg">
       <CardHeader title={capitalize(meal.type)} />
       <CardContent>
         <List>
@@ -177,7 +168,7 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
             <Slider
               value={meal.calories}
               aria-label="Default"
-              valueLabelDisplay="on"
+              valueLabelDisplay="auto"
               onChange={(e, val) => onCaloriesChange(val as number)}
             />
           </ListItem>
@@ -212,9 +203,8 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
         </List>
       </CardContent>
       <div className="p-2 flex gap-2 justify-end">
-        <Button size="medium">Remove</Button>
-        <Button size="medium" variant="outlined">
-          Save
+        <Button size="medium" onClick={onRemove}>
+          Remove
         </Button>
       </div>
     </Card>
