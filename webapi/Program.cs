@@ -1,5 +1,6 @@
 using com.spoonacular;
 using Org.OpenAPITools.Client;
+using webapi.API;
 
 namespace webapi
 {
@@ -16,9 +17,20 @@ namespace webapi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // configure spoonacular sdk
-            Configuration.ApiKey.Add("x-api-key", "9181d4bd10bf4430928d63ab271b2774");
-            builder.Services.AddSingleton<IRecipesApi, RecipesApi>();
+            
+            try
+            {
+                // configure spoonacular sdk
+                Configuration.ApiKey.Add("x-api-key", File.ReadAllText("key"));
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Missing api key");
+                Console.ReadKey();
+                return;
+            }
+            
+            builder.Services.AddSingleton<ICustomRecipesApi, CustomRecipesApi>();
 
             var app = builder.Build();
 
@@ -32,7 +44,6 @@ namespace webapi
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

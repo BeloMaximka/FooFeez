@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webapi", "webapi\webapi.csproj", "{9543EF6C-71A9-4B1F-A2DE-C6BC1BE28AD8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1C904F66-3083-4FB0-B185-3147054CEA7A} = {1C904F66-3083-4FB0-B185-3147054CEA7A}
+	EndProjectSection
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "frontend", "frontend\frontend.esproj", "{DFF072DF-2F4C-4790-9404-AA84F7D7820D}"
 EndProject
