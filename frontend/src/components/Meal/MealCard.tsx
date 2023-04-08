@@ -144,6 +144,12 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
     protein: onProteinChange,
   };
 
+  const maxValues: Partial<Record<MealParams, number>> = {
+    carbs: (meal.calories * 25) / 100,
+    fat: 40,
+    protein: (meal.calories * 5) / 100,
+  };
+
   const handleToggle = (value: MealParams) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
@@ -152,7 +158,7 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
       newChecked.push(value);
     } else {
       newChecked.splice(currentIndex, 1);
-      changeHandlers[value]?.(0);
+      changeHandlers[value]?.(-1);
     }
 
     setChecked(newChecked);
@@ -167,6 +173,7 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
             <Typography variant="subtitle1">Calories</Typography>
             <Slider
               value={meal.calories}
+              max={1000}
               aria-label="Default"
               valueLabelDisplay="auto"
               onChange={(e, val) => onCaloriesChange(val as number)}
@@ -187,7 +194,7 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
                   </Typography>
                   <Slider
                     min={0}
-                    max={100}
+                    max={maxValues[value]}
                     value={meal[value]}
                     onChange={(e, val) =>
                       changeHandlers[value]?.(val as number)

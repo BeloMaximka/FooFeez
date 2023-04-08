@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { MealRequest, MealType } from "./types/dish";
+import { MealRequest, MealType, ResultMeal } from "./types/dish";
 
 interface MenuStore {
   meals: MealRequest[];
@@ -12,15 +12,7 @@ interface MenuStore {
 }
 
 export const useMenuStore = create<MenuStore>()((set) => ({
-  meals: [
-    {
-      type: "breakfast",
-      calories: 50,
-      carbs: 0,
-      fat: 0,
-      protein: 0,
-    },
-  ],
+  meals: [],
   setCalories(index, value) {
     set((state) => {
       const meal: MealRequest = { ...state.meals[index], calories: value };
@@ -73,7 +65,7 @@ export const useMenuStore = create<MenuStore>()((set) => ({
     set((state) => ({
       meals: [
         ...state.meals,
-        { type, calories: 0, carbs: 0, fat: 0, protein: 0 },
+        { type, calories: 0, carbs: -1, fat: -1, protein: -1 },
       ],
     }));
   },
@@ -81,5 +73,17 @@ export const useMenuStore = create<MenuStore>()((set) => ({
     set((state) => ({
       meals: state.meals.filter((_, i) => i !== index),
     }));
+  },
+}));
+
+interface MealStore {
+  meals: ResultMeal[];
+  setMeals: (value: ResultMeal[]) => void;
+}
+
+export const useMealStore = create<MealStore>()((set) => ({
+  meals: [],
+  setMeals(value) {
+    set({ meals: value });
   },
 }));
