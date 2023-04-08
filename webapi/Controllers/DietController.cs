@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using webapi.Model;
 
 namespace webapi.Controllers
 {
     [ApiController]
-    [Route("diet")]
+    [Route("api/diet")]
     public class DietController : ControllerBase
     {
-        [HttpGet(Name = "menu-calories")]
-        public int GetMenuByCalories()
+        [HttpGet(Name = "GetMenuByCalories")]
+        public Menu GetMenuByCalories([FromQuery] int maxCalories)
         {
-            return 1;
+            return new();
         }
     }
 }
