@@ -1,5 +1,6 @@
 using com.spoonacular;
 using Org.OpenAPITools.Client;
+using System.Text.Json;
 
 namespace webapi
 {
@@ -20,6 +21,12 @@ namespace webapi
             Configuration.ApiKey.Add("x-api-key", "9181d4bd10bf4430928d63ab271b2774");
             builder.Services.AddSingleton<IRecipesApi, RecipesApi>();
 
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -38,5 +45,6 @@ namespace webapi
 
             app.Run();
         }
+
     }
 }
