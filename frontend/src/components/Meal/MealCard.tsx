@@ -10,7 +10,7 @@ import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { MealType, ResultMeal } from "@/types/dish";
-import { Box, SvgIcon, capitalize } from "@mui/material";
+import { Box, Link, SvgIcon, capitalize } from "@mui/material";
 import { useQuery } from "react-query";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import LunchDiningIcon from "@mui/icons-material/LunchDining";
@@ -57,7 +57,11 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
       enabled: false,
     }
   );
-  console.log(data);
+
+  const calories = meal.calories * meal.amountMultiplier;
+  const carbs = parseInt(meal.carbs) * meal.amountMultiplier;
+  const fat = parseInt(meal.fat) * meal.amountMultiplier;
+  const protein = parseInt(meal.protein) * meal.amountMultiplier;
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -75,32 +79,34 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
                 {capitalize(meal.mealType)}
               </Typography>
             </Box>
-            <Typography variant="h5">{meal.title}</Typography>
+            <Typography variant="h5">
+              {meal.title} x{meal.amountMultiplier.toFixed(1)}
+            </Typography>
           </>
         }
       />
       <CardMedia component="img" height="194" image={meal.image} alt="Dish" />
       <CardContent>
         <Typography variant="subtitle1" color="text.secondary">
-          {`${meal.calories} calories`}
+          {`${calories} calories`}
         </Typography>
         <Typography
           variant="caption"
           color="text.secondary"
           className="flex flex-col"
         >
-          <span>Fat: {meal.fat}</span>
-          <span>Carbons: {meal.carbs}</span>
-          <span>Protein: {meal.protein}</span>
+          <span>Carbons: {`${carbs.toFixed(1)}g`}</span>
+          <span>Fat: {`${fat.toFixed(1)}g`}</span>
+          <span>Protein: {`${protein.toFixed(1)}g`}</span>
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <Typography>See recipe</Typography>
+        <Typography>{expanded ? "Hide recipe" : "See recipe"}</Typography>
         <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}
           aria-expanded={expanded}
-          aria-label="show more"
+          aria-label="show recipe"
         >
           <ExpandMoreIcon />
         </ExpandMore>
@@ -157,6 +163,9 @@ const MealRecipe: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
           ))}
         </ol>
       </div>
+      <Link variant="body1" href={recipe.spoonacularSourceUrl} target="_blank">
+        Go to recipe
+      </Link>
     </Box>
   );
 };

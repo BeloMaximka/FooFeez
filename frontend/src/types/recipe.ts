@@ -5,6 +5,7 @@ interface Recipe {
   dishTypes: string[];
   extendedIngredients: ExtendedIngredients[];
   sourceUrl: string;
+  spoonacularSourceUrl: string;
   summary: string;
 }
 
