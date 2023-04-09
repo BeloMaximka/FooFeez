@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import React from "react";
-import { CreateMealRequestCard } from "./MealCard";
 import { MealRequest } from "@/types/dish";
+import { CreateMealRequestCard } from "./CreateMealRequestCard";
 
 type Props = {
   meals: MealRequest[];
