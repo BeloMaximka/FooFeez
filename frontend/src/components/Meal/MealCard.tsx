@@ -88,7 +88,7 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
       <CardMedia component="img" height="194" image={meal.image} alt="Dish" />
       <CardContent>
         <Typography variant="subtitle1" color="text.secondary">
-          {`${calories} calories`}
+          {`${calories.toFixed(0)} calories`}
         </Typography>
         <Typography
           variant="caption"
@@ -114,7 +114,10 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent className="p-4">
           {!isLoading && data ? (
-            <MealRecipe recipe={data} />
+            <MealRecipe
+              recipe={data}
+              amountMultiplier={meal.amountMultiplier}
+            />
           ) : (
             <Typography paragraph>Loading...</Typography>
           )}
@@ -124,7 +127,15 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
   );
 };
 
-const MealRecipe: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
+interface MealRecipeProps {
+  recipe: Recipe;
+  amountMultiplier: number;
+}
+
+const MealRecipe: React.FC<MealRecipeProps> = ({
+  recipe,
+  amountMultiplier,
+}) => {
   return (
     <Box display={"flex"} flexDirection={"column"} gap={4}>
       <div className="bg-gray-100 rounded-lg p-2">
@@ -158,7 +169,9 @@ const MealRecipe: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
         <ol className="flex flex-col gap-2">
           {recipe.extendedIngredients.map((i) => (
             <li key={i.id}>
-              <Typography>{i.original}</Typography>
+              <Typography>{`${(i.amount * amountMultiplier).toFixed(1)} ${
+                i.unit
+              } ${i.name}`}</Typography>
             </li>
           ))}
         </ol>

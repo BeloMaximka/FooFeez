@@ -11,9 +11,9 @@ interface Recipe {
 
 interface ExtendedIngredients {
   id: number;
-  aisle: string;
   amount: number;
+  name: string;
+  unit: string;
   original: string;
   originalName: string;
-  unit: string;
 }

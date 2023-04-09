@@ -11,7 +11,7 @@ import {
   Checkbox,
   Button,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 
 interface CreateMealRequestCardProps {
   meal: MealRequest;
@@ -33,6 +33,14 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
   onRemove,
 }) => {
   const [checked, setChecked] = React.useState<string[]>([]);
+
+  useEffect(() => {
+    const checks: string[] = [];
+    if (meal.carbs) checks.push("carbs");
+    if (meal.fat) checks.push("fat");
+    if (meal.protein) checks.push("protein");
+    setChecked(checks);
+  }, []);
 
   const changeHandlers: Partial<Record<MealParams, (value?: number) => void>> =
     {
