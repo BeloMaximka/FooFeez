@@ -49,18 +49,20 @@ namespace webapi.API
             {
                 info.Add(new() { Index = i });
                 if (recipes[i].Calories == null) break;
-                if(protein != null)
+                double recipeCalories = (double)recipes[i].Calories.Value;
+                if (protein != null)
                 {
-                    info[i].AddIrrelevance(recipes[i].Protein, (double)recipes[i].Calories.Value, protein.Value, calories);
+                    info[i].AddIrrelevance(recipes[i].Protein, recipeCalories, protein.Value, calories);
                 }
                 if (carbs != null)
                 {
-                    info[i].AddIrrelevance(recipes[i].Carbs, (double)recipes[i].Calories.Value, carbs.Value, calories);
+                    info[i].AddIrrelevance(recipes[i].Carbs, recipeCalories, carbs.Value, calories);
                 }
                 if (fat != null)
                 {
-                    info[i].AddIrrelevance(recipes[i].Fat, (double)recipes[i].Calories.Value, fat.Value, calories);
+                    info[i].AddIrrelevance(recipes[i].Fat, recipeCalories, fat.Value, calories);
                 }
+                info[i].IrrelevanceFactor += Math.Abs(calories - recipeCalories) * 0.1;
             }
 
             var bestRecipe = recipes[info.OrderBy(x => x.IrrelevanceFactor).First().Index];
