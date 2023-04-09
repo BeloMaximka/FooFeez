@@ -8,8 +8,6 @@ import CardActions from "@mui/material/CardActions";
 import Collapse from "@mui/material/Collapse";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { MealParams, MealRequest, ResultMeal } from "@/types/dish";
 import {
@@ -84,9 +82,9 @@ export const MealCard: React.FC<{ meal: ResultMeal }> = ({ meal }) => {
 interface CreateMealRequestCardProps {
   meal: MealRequest;
   onCaloriesChange: (value: number) => void;
-  onCarbsChange: (value: number) => void;
-  onFatChange: (value: number) => void;
-  onProteinChange: (value: number) => void;
+  onCarbsChange: (value?: number) => void;
+  onFatChange: (value?: number) => void;
+  onProteinChange: (value?: number) => void;
   onRemove: () => void;
 }
 
@@ -102,11 +100,12 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
 }) => {
   const [checked, setChecked] = React.useState<string[]>([]);
 
-  const changeHandlers: Partial<Record<MealParams, (value: number) => void>> = {
-    carbs: onCarbsChange,
-    fat: onFatChange,
-    protein: onProteinChange,
-  };
+  const changeHandlers: Partial<Record<MealParams, (value?: number) => void>> =
+    {
+      carbs: onCarbsChange,
+      fat: onFatChange,
+      protein: onProteinChange,
+    };
 
   const maxValues: Partial<Record<MealParams, number>> = {
     carbs: (meal.calories * 25) / 100,
@@ -122,7 +121,7 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
       newChecked.push(value);
     } else {
       newChecked.splice(currentIndex, 1);
-      changeHandlers[value]?.(-1);
+      changeHandlers[value]?.(undefined);
     }
 
     setChecked(newChecked);
@@ -160,7 +159,7 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
                   <Slider
                     min={5}
                     max={maxValues[value]}
-                    value={meal[value]}
+                    value={meal[value] ?? 0}
                     onChangeCommitted={(e, val) =>
                       changeHandlers[value]?.(val as number)
                     }

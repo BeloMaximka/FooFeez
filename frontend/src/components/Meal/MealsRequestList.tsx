@@ -6,9 +6,9 @@ import { MealRequest } from "@/types/dish";
 type Props = {
   meals: MealRequest[];
   setCalories: (index: number, value: number) => void;
-  setCarbs: (index: number, value: number) => void;
-  setFat: (index: number, value: number) => void;
-  setProtein: (index: number, value: number) => void;
+  setCarbs: (index: number, value?: number) => void;
+  setFat: (index: number, value?: number) => void;
+  setProtein: (index: number, value?: number) => void;
   removeMeal: (index: number) => void;
 };
 

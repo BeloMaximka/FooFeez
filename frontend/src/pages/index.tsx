@@ -1,36 +1,16 @@
 import { AddMeal } from "@/components/Meal/AddMeal";
+import { MealStats } from "@/components/Meal/MealStats";
 import { MealsList } from "@/components/Meal/MealsList";
 import { MealsRequestList } from "@/components/Meal/MealsRequestList";
 import { useMealStore, useMenuStore } from "@/store";
 import { MealParams, MealRequest, MealType } from "@/types/dish";
-import {
-  Box,
-  Button,
-  Container,
-  Paper,
-  Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Tabs,
-} from "@mui/material";
+import { Box, Button, Container, Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 
 const fetchMeals = (meals: MealRequest[]) =>
   fetch("https://localhost:7176/api/meals", {
-    body: JSON.stringify(
-      meals.map((m) => ({
-        type: m.type,
-        calories: m.calories,
-        carbs: m.carbs === -1 ? undefined : m.carbs,
-        fat: m.fat === -1 ? undefined : m.fat,
-        protein: m.protein === -1 ? undefined : m.protein,
-      }))
-    ),
+    body: JSON.stringify(meals),
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -54,9 +34,9 @@ export default function Home() {
   useEffect(() => {
     setStats({
       calories: meals.reduce((prev, obj) => prev + obj.calories, 0),
-      carbs: meals.reduce((prev, obj) => prev + obj.carbs, 0),
-      fat: meals.reduce((prev, obj) => prev + obj.fat, 0),
-      protein: meals.reduce((prev, obj) => prev + obj.protein, 0),
+      carbs: meals.reduce((prev, obj) => prev + (obj?.carbs ?? 0), 0),
+      fat: meals.reduce((prev, obj) => prev + (obj?.fat ?? 0), 0),
+      protein: meals.reduce((prev, obj) => prev + (obj?.protein ?? 0), 0),
     });
   }, [meals]);
 
@@ -102,28 +82,7 @@ export default function Home() {
         </Box>
         <TabPanel value={tabIndex} index={0}>
           <AddMeal value={mealType} setValue={setMealType} onAdd={onAddMeal} />
-          <TableContainer component={Paper} className="mb-4">
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell></TableCell>
-                  <TableCell align="right">Calories</TableCell>
-                  <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                  <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                  <TableCell align="right">Protein&nbsp;(g)</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Total</TableCell>
-                  <TableCell align="right">{stats.calories}</TableCell>
-                  <TableCell align="right">{stats.fat}</TableCell>
-                  <TableCell align="right">{stats.carbs}</TableCell>
-                  <TableCell align="right">{stats.protein}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <MealStats stats={stats} />
           <MealsRequestList meals={meals} {...funcs} />
           <Button
             size="large"

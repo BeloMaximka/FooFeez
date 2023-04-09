@@ -15,7 +15,7 @@ export interface ResultMeal {
 export interface MealRequest {
   type: MealType;
   calories: number;
-  carbs: number;
-  fat: number;
-  protein: number;
+  carbs?: number;
+  fat?: number;
+  protein?: number;
 }
