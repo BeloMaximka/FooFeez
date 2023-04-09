@@ -3,7 +3,7 @@ import { MealStats } from "@/components/Meal/MealStats";
 import { MealsList } from "@/components/Meal/MealsList";
 import { MealsRequestList } from "@/components/Meal/MealsRequestList";
 import { useMealStore, useMenuStore } from "@/store";
-import { MealParams, MealRequest, MealType } from "@/types/dish";
+import { MealParams, MealRequest, MealType, ResultMeal } from "@/types/dish";
 import { Box, Button, Container, Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useMutation } from "react-query";
@@ -15,7 +15,7 @@ const fetchMeals = (meals: MealRequest[]) =>
     headers: {
       "Content-Type": "application/json",
     },
-  });
+  }).then((r) => r.json());
 
 export default function Home() {
   const { meals, addMeal, ...funcs } = useMenuStore();
@@ -23,7 +23,6 @@ export default function Home() {
   const setMeals = useMealStore((s) => s.setMeals);
   const [mealType, setMealType] = useState<MealType>();
   const [tabIndex, setTabIndex] = useState(0);
-  const [isLoding, setIsLoading] = useState(false);
   const [stats, setStats] = useState<Record<MealParams, number>>({
     calories: 0,
     carbs: 0,
@@ -44,20 +43,12 @@ export default function Home() {
     setTabIndex(newValue);
   };
 
-  const mutation = useMutation(
-    () => {
-      setIsLoading(true);
-      return fetchMeals(meals);
+  const mutation = useMutation<ResultMeal[]>(() => fetchMeals(meals), {
+    async onSuccess(data) {
+      setMeals(data);
+      setTabIndex(1);
     },
-    {
-      async onSuccess(data) {
-        const response = await data.json();
-        setMeals(response);
-        setTabIndex(1);
-        setIsLoading(false);
-      },
-    }
-  );
+  });
 
   const onAddMeal = () => mealType && addMeal(mealType);
   const getMeals = () => mutation.mutate();
@@ -90,7 +81,7 @@ export default function Home() {
             className="w-max mt-4"
             onClick={getMeals}
           >
-            {isLoding ? "Loading..." : "Get recipes"}
+            {mutation.isLoading ? "Loading..." : "Get recipes"}
           </Button>
         </TabPanel>
         <TabPanel value={tabIndex} index={1}>
