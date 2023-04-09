@@ -69,7 +69,7 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
           <ListItem className="flex flex-col gap-2 items-start">
             <Typography variant="subtitle1">Calories</Typography>
             <Slider
-              min={100}
+              min={50}
               max={700}
               value={meal.calories}
               aria-label="Default"

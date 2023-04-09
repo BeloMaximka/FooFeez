@@ -9,9 +9,13 @@ import Collapse from "@mui/material/Collapse";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { ResultMeal } from "@/types/dish";
-import { Box, capitalize } from "@mui/material";
+import { MealType, ResultMeal } from "@/types/dish";
+import { Box, SvgIcon, capitalize } from "@mui/material";
 import { useQuery } from "react-query";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
+import LunchDiningIcon from "@mui/icons-material/LunchDining";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import TapasIcon from "@mui/icons-material/Tapas";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -35,6 +39,13 @@ interface MealCardProps {
 const getRecipe = (id: number) =>
   fetch(`https://localhost:7176/api/recipe?id=${id}`).then((r) => r.json());
 
+const icons: Record<MealType, React.ReactNode> = {
+  breakfast: <WbSunnyIcon />,
+  lunch: <LunchDiningIcon />,
+  dinner: <DarkModeIcon />,
+  snack: <TapasIcon />,
+};
+
 export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
   const [expanded, setExpanded] = React.useState(false);
 
@@ -55,13 +66,15 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
 
   return (
     <Card className="max-w-sm w-full h-max">
-      {/* <CardHeader title={`${capitalize(meal.mealType)}: ${meal.title}`} /> */}
       <CardHeader
         title={
           <>
-            <Typography variant="h4" fontWeight="bold">
-              {capitalize(meal.mealType)}
-            </Typography>
+            <Box display={"flex"} gap={2} alignItems={"center"}>
+              <SvgIcon fontSize="large">{icons[meal.mealType]}</SvgIcon>
+              <Typography variant="h4" fontWeight="bold">
+                {capitalize(meal.mealType)}
+              </Typography>
+            </Box>
             <Typography variant="h5">{meal.title}</Typography>
           </>
         }
