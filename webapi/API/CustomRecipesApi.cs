@@ -21,14 +21,14 @@ namespace webapi.API
             var fileParams = new Dictionary<string, FileParameter>();
             string postBody = null;
 
-            queryParams.Add("maxCalories", ApiClient.ParameterToString(calories * 1.1));
+            queryParams.Add("maxCalories", ApiClient.ParameterToString(calories));
             queryParams.Add("number", "100");
             if (protein != null)
-                queryParams.Add("maxProtein", ApiClient.ParameterToString(protein * 1.1));
+                queryParams.Add("maxProtein", ApiClient.ParameterToString(protein));
             if (carbs != null)
-                queryParams.Add("maxCarbs", ApiClient.ParameterToString(carbs * 1.1));
+                queryParams.Add("maxCarbs", ApiClient.ParameterToString(carbs));
             if (fat != null)
-                queryParams.Add("maxFat", ApiClient.ParameterToString(fat * 1.1));
+                queryParams.Add("maxFat", ApiClient.ParameterToString(fat));
 
             // authentication setting, if any
             string[] authSettings = new string[] { "apiKeyScheme" };
