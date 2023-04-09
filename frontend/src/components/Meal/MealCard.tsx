@@ -141,7 +141,7 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
               value={meal.calories}
               aria-label="Default"
               valueLabelDisplay="auto"
-              onChange={(e, val) => onCaloriesChange(val as number)}
+              onChangeCommitted={(e, val) => onCaloriesChange(val as number)}
             />
           </ListItem>
           {mealParams.map((value) => {
@@ -161,7 +161,7 @@ export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
                     min={5}
                     max={maxValues[value]}
                     value={meal[value]}
-                    onChange={(e, val) =>
+                    onChangeCommitted={(e, val) =>
                       changeHandlers[value]?.(val as number)
                     }
                     aria-label="Default"
