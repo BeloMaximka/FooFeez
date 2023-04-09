@@ -3,6 +3,7 @@ export type MealType = typeof mealTypes[number];
 export type MealParams = "calories" | "carbs" | "fat" | "protein";
 
 export interface ResultMeal {
+  id: number;
   title: string;
   image: string;
   calories: number;

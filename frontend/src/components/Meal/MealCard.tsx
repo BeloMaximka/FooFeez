@@ -9,15 +9,9 @@ import Collapse from "@mui/material/Collapse";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { MealParams, MealRequest, ResultMeal } from "@/types/dish";
-import {
-  Button,
-  Checkbox,
-  List,
-  ListItem,
-  Slider,
-  capitalize,
-} from "@mui/material";
+import { ResultMeal } from "@/types/dish";
+import { Box, capitalize } from "@mui/material";
+import { useQuery } from "react-query";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -34,16 +28,44 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
-export const MealCard: React.FC<{ meal: ResultMeal }> = ({ meal }) => {
+interface MealCardProps {
+  meal: ResultMeal;
+}
+
+const getRecipe = (id: number) =>
+  fetch(`https://localhost:7176/api/recipe?id=${id}`).then((r) => r.json());
+
+export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
   const [expanded, setExpanded] = React.useState(false);
+
+  const fetchRecipe = () => getRecipe(meal.id);
+  const { data, refetch, isLoading } = useQuery<Recipe>(
+    `get-recipe-${meal.id}`,
+    fetchRecipe,
+    {
+      enabled: false,
+    }
+  );
+  console.log(data);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
+    !data && refetch();
   };
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
-      <CardHeader title={`${capitalize(meal.mealType)}: ${meal.title}`} />
+    <Card className="max-w-sm w-full h-max">
+      {/* <CardHeader title={`${capitalize(meal.mealType)}: ${meal.title}`} /> */}
+      <CardHeader
+        title={
+          <>
+            <Typography variant="h4" fontWeight="bold">
+              {capitalize(meal.mealType)}
+            </Typography>
+            <Typography variant="h5">{meal.title}</Typography>
+          </>
+        }
+      />
       <CardMedia component="img" height="194" image={meal.image} alt="Dish" />
       <CardContent>
         <Typography variant="subtitle1" color="text.secondary">
@@ -71,113 +93,57 @@ export const MealCard: React.FC<{ meal: ResultMeal }> = ({ meal }) => {
         </ExpandMore>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>Method:</Typography>
+        <CardContent className="p-4">
+          {!isLoading && data ? (
+            <MealRecipe recipe={data} />
+          ) : (
+            <Typography paragraph>Loading...</Typography>
+          )}
         </CardContent>
       </Collapse>
     </Card>
   );
 };
 
-interface CreateMealRequestCardProps {
-  meal: MealRequest;
-  onCaloriesChange: (value: number) => void;
-  onCarbsChange: (value?: number) => void;
-  onFatChange: (value?: number) => void;
-  onProteinChange: (value?: number) => void;
-  onRemove: () => void;
-}
-
-const mealParams: MealParams[] = ["carbs", "fat", "protein"];
-
-export const CreateMealRequestCard: React.FC<CreateMealRequestCardProps> = ({
-  meal,
-  onCaloriesChange,
-  onCarbsChange,
-  onFatChange,
-  onProteinChange,
-  onRemove,
-}) => {
-  const [checked, setChecked] = React.useState<string[]>([]);
-
-  const changeHandlers: Partial<Record<MealParams, (value?: number) => void>> =
-    {
-      carbs: onCarbsChange,
-      fat: onFatChange,
-      protein: onProteinChange,
-    };
-
-  const maxValues: Partial<Record<MealParams, number>> = {
-    carbs: (meal.calories * 25) / 100,
-    fat: 40,
-    protein: (meal.calories * 5) / 100,
-  };
-
-  const handleToggle = (value: MealParams) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-      changeHandlers[value]?.(undefined);
-    }
-
-    setChecked(newChecked);
-  };
-
+const MealRecipe: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
   return (
-    <Card className="w-full max-w-lg">
-      <CardHeader title={capitalize(meal.type)} />
-      <CardContent>
-        <List>
-          <ListItem className="flex flex-col gap-2 items-start">
-            <Typography variant="subtitle1">Calories</Typography>
-            <Slider
-              min={100}
-              max={1000}
-              value={meal.calories}
-              aria-label="Default"
-              valueLabelDisplay="auto"
-              onChangeCommitted={(e, val) => onCaloriesChange(val as number)}
-            />
-          </ListItem>
-          {mealParams.map((value) => {
-            const isChecked = checked.includes(value);
-            return (
-              <ListItem className="flex gap-3 items-center" key={value}>
-                <Checkbox
-                  checked={isChecked}
-                  onChange={handleToggle(value)}
-                  inputProps={{ "aria-label": "controlled" }}
-                />
-                <div className="flex flex-col gap-2 items-start w-full">
-                  <Typography variant="subtitle1">
-                    {capitalize(value)}
-                  </Typography>
-                  <Slider
-                    min={5}
-                    max={maxValues[value]}
-                    value={meal[value] ?? 0}
-                    onChangeCommitted={(e, val) =>
-                      changeHandlers[value]?.(val as number)
-                    }
-                    aria-label="Default"
-                    valueLabelDisplay={isChecked ? "on" : "off"}
-                    disabled={!isChecked}
-                  />
-                </div>
-              </ListItem>
-            );
-          })}
-        </List>
-      </CardContent>
-      <div className="p-2 flex gap-2 justify-end">
-        <Button size="medium" onClick={onRemove}>
-          Remove
-        </Button>
+    <Box display={"flex"} flexDirection={"column"} gap={4}>
+      <div className="bg-gray-100 rounded-lg p-2">
+        <Typography paragraph margin={0}>
+          <Typography fontWeight={"bold"} component={"span"}>
+            Servings:{" "}
+          </Typography>
+          <Typography component={"span"}>{recipe.servings}</Typography>
+        </Typography>
+        <Typography paragraph margin={0}>
+          <Typography fontWeight={"bold"} component={"span"}>
+            Ready in:{" "}
+          </Typography>
+          <Typography component={"span"}>
+            {recipe.readyInMinutes} minutes
+          </Typography>
+        </Typography>
+        <Typography paragraph margin={0}>
+          <Typography fontWeight={"bold"} component={"span"}>
+            Dish types:{" "}
+          </Typography>
+          <Typography component={"span"}>
+            {recipe.dishTypes.join(", ")}
+          </Typography>
+        </Typography>
       </div>
-    </Card>
+      <div>
+        <Typography fontWeight={"bold"} paragraph marginBottom={2}>
+          Ingredients:
+        </Typography>
+        <ol className="flex flex-col gap-2">
+          {recipe.extendedIngredients.map((i) => (
+            <li key={i.id}>
+              <Typography>{i.original}</Typography>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </Box>
   );
 };

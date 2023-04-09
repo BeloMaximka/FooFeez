@@ -11,7 +11,7 @@ export const MealsList = ({ meals }: Props) => {
   return (
     <Box display={"flex"} flexWrap={"wrap"} gap={4}>
       {meals.map((m, i) => (
-        <MealCard key={i} meal={m} />
+        <MealCard key={m.id} meal={m} />
       ))}
     </Box>
   );
