@@ -2,6 +2,7 @@
 {
     public class MealResult
     {
+        public int Id { get; set; }
         public string Title { get; set; } = null!;
         public string Image { get; set; } = null!;
         public string MealType { get; set; } = null!;

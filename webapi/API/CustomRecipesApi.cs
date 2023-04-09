@@ -52,7 +52,8 @@ namespace webapi.API
                 Carbs = randomRecipe.Carbs,
                 Fat = randomRecipe.Fat,
                 Image = randomRecipe.Image,
-                MealType = type
+                MealType = type,
+                Id = randomRecipe.Id ?? -1
             };
         }
     }
