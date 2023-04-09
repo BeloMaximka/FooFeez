@@ -5,14 +5,15 @@ interface Recipe {
   dishTypes: string[];
   extendedIngredients: ExtendedIngredients[];
   sourceUrl: string;
+  spoonacularSourceUrl: string;
   summary: string;
 }
 
 interface ExtendedIngredients {
   id: number;
-  aisle: string;
   amount: number;
+  name: string;
+  unit: string;
   original: string;
   originalName: string;
-  unit: string;
 }

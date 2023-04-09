@@ -9,9 +9,13 @@ import Collapse from "@mui/material/Collapse";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { ResultMeal } from "@/types/dish";
-import { Box, capitalize } from "@mui/material";
+import { MealType, ResultMeal } from "@/types/dish";
+import { Box, Link, SvgIcon, capitalize } from "@mui/material";
 import { useQuery } from "react-query";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
+import LunchDiningIcon from "@mui/icons-material/LunchDining";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import TapasIcon from "@mui/icons-material/Tapas";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -35,6 +39,13 @@ interface MealCardProps {
 const getRecipe = (id: number) =>
   fetch(`https://localhost:7176/api/recipe?id=${id}`).then((r) => r.json());
 
+const icons: Record<MealType, React.ReactNode> = {
+  breakfast: <WbSunnyIcon />,
+  lunch: <LunchDiningIcon />,
+  dinner: <DarkModeIcon />,
+  snack: <TapasIcon />,
+};
+
 export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
   const [expanded, setExpanded] = React.useState(false);
 
@@ -46,7 +57,11 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
       enabled: false,
     }
   );
-  console.log(data);
+
+  const calories = meal.calories * meal.amountMultiplier;
+  const carbs = parseInt(meal.carbs) * meal.amountMultiplier;
+  const fat = parseInt(meal.fat) * meal.amountMultiplier;
+  const protein = parseInt(meal.protein) * meal.amountMultiplier;
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -55,39 +70,43 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
 
   return (
     <Card className="max-w-sm w-full h-max">
-      {/* <CardHeader title={`${capitalize(meal.mealType)}: ${meal.title}`} /> */}
       <CardHeader
         title={
           <>
-            <Typography variant="h4" fontWeight="bold">
-              {capitalize(meal.mealType)}
+            <Box display={"flex"} gap={2} alignItems={"center"}>
+              <SvgIcon fontSize="large">{icons[meal.mealType]}</SvgIcon>
+              <Typography variant="h4" fontWeight="bold">
+                {capitalize(meal.mealType)}
+              </Typography>
+            </Box>
+            <Typography variant="h5">
+              {meal.title} x{meal.amountMultiplier.toFixed(1)}
             </Typography>
-            <Typography variant="h5">{meal.title}</Typography>
           </>
         }
       />
       <CardMedia component="img" height="194" image={meal.image} alt="Dish" />
       <CardContent>
         <Typography variant="subtitle1" color="text.secondary">
-          {`${meal.calories} calories`}
+          {`${calories.toFixed(0)} calories`}
         </Typography>
         <Typography
           variant="caption"
           color="text.secondary"
           className="flex flex-col"
         >
-          <span>Fat: {meal.fat}</span>
-          <span>Carbons: {meal.carbs}</span>
-          <span>Protein: {meal.protein}</span>
+          <span>Carbons: {`${carbs.toFixed(1)}g`}</span>
+          <span>Fat: {`${fat.toFixed(1)}g`}</span>
+          <span>Protein: {`${protein.toFixed(1)}g`}</span>
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <Typography>See recipe</Typography>
+        <Typography>{expanded ? "Hide recipe" : "See recipe"}</Typography>
         <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}
           aria-expanded={expanded}
-          aria-label="show more"
+          aria-label="show recipe"
         >
           <ExpandMoreIcon />
         </ExpandMore>
@@ -95,7 +114,10 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent className="p-4">
           {!isLoading && data ? (
-            <MealRecipe recipe={data} />
+            <MealRecipe
+              recipe={data}
+              amountMultiplier={meal.amountMultiplier}
+            />
           ) : (
             <Typography paragraph>Loading...</Typography>
           )}
@@ -105,7 +127,15 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
   );
 };
 
-const MealRecipe: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
+interface MealRecipeProps {
+  recipe: Recipe;
+  amountMultiplier: number;
+}
+
+const MealRecipe: React.FC<MealRecipeProps> = ({
+  recipe,
+  amountMultiplier,
+}) => {
   return (
     <Box display={"flex"} flexDirection={"column"} gap={4}>
       <div className="bg-gray-100 rounded-lg p-2">
@@ -139,11 +169,16 @@ const MealRecipe: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
         <ol className="flex flex-col gap-2">
           {recipe.extendedIngredients.map((i) => (
             <li key={i.id}>
-              <Typography>{i.original}</Typography>
+              <Typography>{`${(i.amount * amountMultiplier).toFixed(1)} ${
+                i.unit
+              } ${i.name}`}</Typography>
             </li>
           ))}
         </ol>
       </div>
+      <Link variant="body1" href={recipe.spoonacularSourceUrl} target="_blank">
+        Go to recipe
+      </Link>
     </Box>
   );
 };

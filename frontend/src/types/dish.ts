@@ -10,6 +10,7 @@ export interface ResultMeal {
   carbs: string;
   fat: string;
   protein: string;
+  amountMultiplier: number;
   mealType: MealType;
 }
 
